@@ -49,7 +49,7 @@ class MonitorableBehavior extends ModelBehavior {
 					$monitorings = $this->MonitoringObject->find('metrics', array(
 						'conditions' => array(
 							'model' => $model->name,
-							'id' => $val[$model->alias]['id'],
+							'foreign_key' => $val[$model->alias]['id'],
 							'type' => $this->settings[$model->alias]['type'],
 						)
 					));
@@ -59,7 +59,7 @@ class MonitorableBehavior extends ModelBehavior {
 						$monitorings = $this->MonitoringObject->find('metrics', array(
 							'conditions' => array(
 								'model' => $model->name,
-								'id' => $val[$model->alias]['id'],
+								'foreign_key' => $val[$model->alias]['id'],
 								'type' => $type,
 							)
 						));
