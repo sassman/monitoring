@@ -66,17 +66,25 @@ class MonitorableBehavior extends ModelBehavior {
 	 * @access public
 	 */
 	function node(&$model, $data) {
-		$result = array();
+		$result = $save = array();
 
-		if(!isset($data[$model->alias][$model->primaryKey]))
-			return $result;
+		$save = array_intersect_key($data, array('foreign_key' => true, 'type' => true));
+		if(empty($data[$model->alias][$model->primaryKey])) {
+			if(empty($model->{$model->primaryKey})) {
+				return $result;
+			}
+			else {
+				$save['foreign_key'] = $model->{$model->primaryKey};
+			}
+		}else {
+			$save['foreign_key'] = $data[$model->alias][$model->primaryKey];
+		}
 
 		return array(
 			$this->MonitoringObject->alias => array_merge(
 				$this->settings[$model->alias],
-				array(
-					'foreign_key' => $data[$model->alias][$model->primaryKey]
-		)));
+				$save
+		));
 	}
 
 	function monitor(&$model, $data) {
