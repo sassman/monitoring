@@ -20,14 +20,17 @@ class MonitoringObject extends AppModel {
 
 	public $name = 'MonitoringObject';
 	public $cacheQueries = false;
+	public $_findMethods = array('metrics' => true);
 
-	public function selectMonitoring($model, $key, $type = 'download') {
-		return $this->find('count', array(
-			'conditions' => array(
-				"{$this->alias}.type" => $type,
-				"{$this->alias}.foreign_key" => $key,
-				"{$this->alias}.model" => $model
-			)
-		));
+	
+	public function _findMetrics($state, $query, array $results = array()) {
+		if($state == 'before') {
+			$query = $this->_findCount($state, $query, $results);
+			return $query;
+		}
+		elseif ($state == 'after') {
+			$results = $this->_findCount($state, $query, $results);
+			return $results;
+		}
 	}
 }

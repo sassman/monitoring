@@ -45,10 +45,13 @@ class MonitorableBehavior extends ModelBehavior {
 	function afterFind(&$model, $results, $primary) {
 		foreach ($results as $key => $val) {
 			if (isset($val[$model->alias]['id'])) {
-				$monitorings = $this->MonitoringObject->selectMonitoring(
-					$model->name,
-					$val[$model->alias]['id'],
-					$this->settings[$model->alias]['type']);
+				$monitorings = $this->MonitoringObject->find('monitoring', array(
+					'conditions' => array(
+						'model' => $model->name,
+						'id' => $val[$model->alias]['id'],
+						'type' => $this->settings[$model->alias]['type'],
+					)
+				));
 
 				$results[$key][$model->alias][$this->settings[$model->alias]['type'].'s'] =
 					$monitorings;
