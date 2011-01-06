@@ -16,19 +16,18 @@
  * @copyright	Copyright (C) 2006 - 2011,  Lubico Business, Sven Aßmann <sven.assmann@lubico.biz>
  *
  */
-class MonitoringObject extends AppModel{
+class MonitoringObject extends AppModel {
 
 	public $name = 'MonitoringObject';
 	public $cacheQueries = false;
 
-	function selectMonitoring($model, $key, $type = 'download'){
-		return $this->find('count',
-			array('conditions' =>
-				array(
-					'MonitoringObject.type' => $type,
-					'MonitoringObject.foreign_key' => $key,
-					'MonitoringObject.model' => $model
-		)));
+	public function selectMonitoring($model, $key, $type = 'download') {
+		return $this->find('count', array(
+			'conditions' => array(
+				"{$this->alias}.type" => $type,
+				"{$this->alias}.foreign_key" => $key,
+				"{$this->alias}.model" => $model
+			)
+		));
 	}
-
 }
