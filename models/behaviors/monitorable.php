@@ -36,7 +36,7 @@ class MonitorableBehavior extends ModelBehavior {
 			(array)$settings
 		);
 
-		$this->MonitoringObject =& ClassRegistry::init('MonitoringObject');
+		$this->MonitoringObject =& ClassRegistry::init('monitoring.MonitoringObject');
 	}
 
 	/**
