@@ -52,9 +52,9 @@ Usage
  * See whats up
 
 <pre><code class="php">
-	<!-- app/views/posts/view.ctp -->
-	This post was <?php echo $post['Post']['views'] ?> viewed
-	This post has <?php echo $post['Post']['likes'] ?> likes
+	< ! -- app/views/posts/view.ctp -- >
+	This post was <? php echo $post['Post']['views'] ? > viewed
+	This post has <? php echo $post['Post']['likes'] ? > likes
 </code></pre>
 
 	in the posts/view View we want to show the monitored metrics
