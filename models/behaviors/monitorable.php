@@ -43,6 +43,9 @@ class MonitorableBehavior extends ModelBehavior {
 	 * Adding the Monitor data within the Model data
 	 */
 	function afterFind(&$model, $results, $primary) {
+		if(!$results) {
+			return $results;
+		}
 		foreach ($results as $key => $val) {
 			if (isset($val[$model->alias]['id'])) {
 				if(!is_array($this->settings[$model->alias]['type'])) {
