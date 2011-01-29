@@ -17,6 +17,15 @@
  */	
 class MonitorableBehavior extends ModelBehavior {
 
+	public $bot_list = array('Teoma', 'alexa', 'froogle', 'Gigabot', 'inktomi',
+		'looksmart', 'URL_Spider_SQL', 'Firefly', 'NationalDirectory',
+		'Ask Jeeves', 'TECNOSEEK', 'InfoSeek', 'WebFindBot', 'girafabot',
+		'crawler', 'www.galaxy.com', 'Googlebot', 'Scooter', 'Slurp',
+		'msnbot', 'appie', 'FAST', 'WebBug', 'Spade', 'ZyBorg', 'rabaz',
+		'Baiduspider', 'Feedfetcher-Google', 'TechnoratiSnoop', 'Rankivabot',
+		'Mediapartners-Google', 'Sogou web spider', 'WebAlta Crawler'
+	);
+
 	/**
 	 * @param mixed $config
 	 * @return void
@@ -25,6 +34,7 @@ class MonitorableBehavior extends ModelBehavior {
 	function setup(&$Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
 			$this->settings[$Model->alias] = array(
+				'prevent_bots' => true,
 				'model' => $Model->name,
 				'type' => 'download',
 				'ip' => env('REMOTE_ADDR'),
@@ -103,11 +113,27 @@ class MonitorableBehavior extends ModelBehavior {
 
 	function monitor(&$model, $data) {
 
+		if($this->settings[$model->alias]['prevent_bots']) {
+			$is_bot = $this->identifyBot($this->settings[$model->alias]['user_agent']);
+			if($is_bot) {
+				return;
+			}
+		}
+
 		$saving = $this->node($model, $data);
 
 		if(!empty ($saving)){
 			$this->MonitoringObject->create();
 			$this->MonitoringObject->save($saving);
 		}
+	}
+
+	protected function identifyBot($user_agent) {
+		foreach($this->bot_list as $bot) {
+			if(ereg($bot, $user_agent)) {
+				return $bot;
+			}
+		}
+		return false;
 	}
 }
