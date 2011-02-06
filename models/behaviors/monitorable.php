@@ -56,28 +56,15 @@ class MonitorableBehavior extends ModelBehavior {
 		if(!$results) {
 			return $results;
 		}
+		$types = !is_array($this->settings[$model->alias]['type'])
+			? array($this->settings[$model->alias]['type'])
+			: $this->settings[$model->alias]['type'];
+			
 		foreach ($results as $key => $val) {
 			if (isset($val[$model->alias]['id'])) {
-				if(!is_array($this->settings[$model->alias]['type'])) {
-					$monitorings = $this->MonitoringObject->find('metrics', array(
-						'conditions' => array(
-							'model' => $model->name,
-							'foreign_key' => $val[$model->alias]['id'],
-							'type' => $this->settings[$model->alias]['type'],
-						)
-					));
-					$results[$key][$model->alias][$this->settings[$model->alias]['type'].'s'] = $monitorings;
-				}else {
-					foreach($this->settings[$model->alias]['type'] as $type) {
-						$monitorings = $this->MonitoringObject->find('metrics', array(
-							'conditions' => array(
-								'model' => $model->name,
-								'foreign_key' => $val[$model->alias]['id'],
-								'type' => $type,
-							)
-						));
-						$results[$key][$model->alias][$type.'s'] = $monitorings;
-					}
+				foreach($types as $type) {
+					$metrics = $this->_getValue($model->name, $val[$model->alias]['id'], $type);
+					$results[$key][$model->alias][$type.'s'] = $metrics;
 				}
 			}
 		}
@@ -126,6 +113,18 @@ class MonitorableBehavior extends ModelBehavior {
 			$this->MonitoringObject->create();
 			$this->MonitoringObject->save($saving);
 		}
+
+		
+		$this->_setValue(
+			$saving[$this->MonitoringObject->alias]['model'],
+			$saving[$this->MonitoringObject->alias]['foreign_key'],
+			$saving[$this->MonitoringObject->alias]['type'],
+			$this->MonitoringObject->find('metrics', array(
+				'conditions' => array_intersect_key($saving[$this->MonitoringObject->alias], array(
+					'model' => true, 'foreign_key' => true, 'type' => true
+				)
+			)))
+		);
 	}
 
 	protected function identifyBot($user_agent) {
@@ -135,5 +134,28 @@ class MonitorableBehavior extends ModelBehavior {
 			}
 		}
 		return false;
+	}
+
+	protected function _setValue($model, $foreign_key, $type, $metrics, $useCache = true) {
+		if($useCache) {
+			$cacheKey = 'monitorable_'.Inflector::underscore($model).'_'.$type.'_'.$foreign_key;
+			Cache::write($cacheKey, $metrics);
+		}
+		return $metrics;
+	}
+
+	protected function _getValue($model, $foreign_key, $type, $useCache = true) {
+		$data = compact('model', 'foreign_key', 'type');
+		$metrics = null;
+		if($useCache) {
+			$cacheKey = 'monitorable_'.Inflector::underscore($data['model']).'_'.$data['type'].'_'.$data['foreign_key'];
+			$metrics = Cache::read($cacheKey);
+		}
+		$metrics = !empty($metrics)
+			? $metrics
+			: $this->_setValue($data['model'], $data['foreign_key'], $data['type'], $this->MonitoringObject->find('metrics', array(
+				'conditions' => $data
+			)));
+		return $metrics;
 	}
 }
