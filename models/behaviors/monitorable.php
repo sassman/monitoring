@@ -14,7 +14,7 @@
  * @link		http://www.lubico.biz
  * @copyright	Copyright (C) 2006 - 2011,  Lubico Business, Sven Aßmann <sven.assmann@lubico.biz>
  *
- */	
+ */
 class MonitorableBehavior extends ModelBehavior {
 
 	/**
@@ -114,7 +114,6 @@ class MonitorableBehavior extends ModelBehavior {
 			$this->MonitoringObject->save($saving);
 		}
 
-		
 		$this->_setValue(
 			$saving[$this->MonitoringObject->alias]['model'],
 			$saving[$this->MonitoringObject->alias]['foreign_key'],
