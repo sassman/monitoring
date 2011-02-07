@@ -146,12 +146,12 @@ class MonitorableBehavior extends ModelBehavior {
 
 	protected function _getValue($model, $foreign_key, $type, $useCache = true) {
 		$data = compact('model', 'foreign_key', 'type');
-		$metrics = null;
+		$metrics = false;
 		if($useCache) {
 			$cacheKey = 'monitorable_'.Inflector::underscore($data['model']).'_'.$data['type'].'_'.$data['foreign_key'];
 			$metrics = Cache::read($cacheKey);
 		}
-		$metrics = !empty($metrics)
+		$metrics = $metrics !== false
 			? $metrics
 			: $this->_setValue($data['model'], $data['foreign_key'], $data['type'], $this->MonitoringObject->find('metrics', array(
 				'conditions' => $data
