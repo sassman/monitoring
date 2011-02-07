@@ -25,20 +25,26 @@ Usage
 
  * Configuration
 
+	we configure the post model to include the 2 metrics 'view' and 'like'.
+
 <pre><code class="php">
+<?php
 	class Post extends AppModel {
 		public $actsAs = array(
-			'monitoring.Monitorable' => array('view', 'like')
+			'monitoring.Monitorable' => array('type' => array(
+				'like',
+				'view',
+			)),
 		);
 	}
 </code></pre>
 
-	we have configures the Post model to include the 2 metrics 'view' and 'like'.
-	why this, and what is dows see later.
+ * Usage to monitor metrics
 
- * Monitor the metrics
- 
+	on the PostsController::view method we want to monitor the 'view' metrics
+	
 <pre><code class="php">
+<?php
 	class PostsController extends AppController {
 		public function view( $id ){
 			// a post is viewed, so lets track this as a metric like this
@@ -47,14 +53,12 @@ Usage
 	}
 </code></pre>
 
-	on the PostsController::view method we want to monitor the 'view' metrics
+ * Review the metrics
 
- * See whats up
+	in the posts view we want to show the monitored metrics
 
 <pre><code class="php">
-	< ! -- app/views/posts/view.ctp -- >
-	This post was <? php echo $post['Post']['views'] ? > viewed
-	This post has <? php echo $post['Post']['likes'] ? > likes
+	<!-- app/views/posts/view.ctp -->
+	This post was <?php echo $post['Post']['views'] ?> viewed
+	This post has <?php echo $post['Post']['likes'] ?> likes
 </code></pre>
-
-	in the posts/view View we want to show the monitored metrics
