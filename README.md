@@ -52,3 +52,11 @@ in the posts view we want to show the monitored metrics
 	<!-- app/views/posts/view.ctp -->
 	This post was <?php echo $post['Post']['views'] ?> viewed
 	This post has <?php echo $post['Post']['likes'] ?> likes
+
+Performance
+-----------
+
+ * Some thougths about the performance
+ 
+for best performance the behavior cache each metrics. If the monitor function is called,
+the cache (only for this metrics by metric-type, model, id) is updated.
