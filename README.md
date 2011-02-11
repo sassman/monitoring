@@ -16,7 +16,9 @@ Installation
 	$  git submodule init
 	$  git submodule update
 
-now install the schema to your database
+now install the schema to your database look at
+
+	app/plugins/monitoring/config/schema/install.sql
 
 Usage
 -----
